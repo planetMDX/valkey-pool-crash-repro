@@ -13,7 +13,7 @@ enum Entry {
 
         let port = ProcessInfo.processInfo.environment["VALKEY_PORT"].flatMap(Int.init) ?? 16379
         let address = ValkeyServerAddress.hostname("127.0.0.1", port: port)
-        let concurrency = System.coreCount
+        let concurrency = ProcessInfo.processInfo.environment["CONCURRENCY"].flatMap(Int.init) ?? System.coreCount
         let workItems = ProcessInfo.processInfo.environment["WORK_ITEMS"].flatMap(Int.init) ?? 1500
         let workItemDuration = Duration.seconds(1.5) / workItems
 
@@ -21,7 +21,7 @@ enum Entry {
         let client = ValkeyClient(
             address,
             configuration: .init(
-                connectionPool: .init(maximumConnectionSoftLimit: System.coreCount / 2, maximumConnectionHardLimit: System.coreCount),
+                connectionPool: .init(minimumConnectionCount: 1, maximumConnectionSoftLimit: System.coreCount / 2, maximumConnectionHardLimit: System.coreCount),
                 commandTimeout: .seconds(1),
             ),
             eventLoopGroup: eventLoopGroup,
