@@ -1,0 +1,5 @@
+services:
+  valkey:
+    image: valkey/valkey:8.1
+    ports:
+      - "16379:6379"
